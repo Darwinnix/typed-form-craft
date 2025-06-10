@@ -1,63 +1,119 @@
-# TypedFormCraft
+# FormGroup Decorator Library Documentation
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.0.
+## Overview
+This library provides a convenient way to transform TypeScript classes into Angular FormGroups using decorators. It simplifies form management by automatically creating FormControls from class properties and handling validation.
 
-## Code scaffolding
+## Installation
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+npm install typed-form-craft
 
-```bash
-ng generate component component-name
+## Requirements
+- Angular 19.0.0 or higher
+- TypeScript 5.0.0 or higher
+
+## Features
+
+### Automatic FormGroup Generation
+- Transform any class into a FormGroup using the `@controlProp` annotation
+- Class properties are automatically converted into FormControls
+- Supports nested forms and complex structures
+
+Example:
+```typescript
+// Define your class with the decorator
+
+export class MyClass {
+  @controlProp({ defaultValue: '' })
+  firstField: string;
+
+  @controlProp({ defaultValue: false })
+  secondField: boolean;
+
+  @controlProp({ defaultValue: 0 })
+  anotherField: number;
+
+  fieldToIgnore: string;
+}
+
+// Usage in component
+export class CustomerComponent {
+  customerForm: FormGroup;
+
+  constructor() {
+    // Automatically creates a FormGroup with all FormControls (only decorated)
+    this.customerForm = createFormFromClass<MyClass>(test);
+  }
+}
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Built-in Validation
+- Includes `JlValidators` for common validation scenarios
+- Validators can be activated based on conditions
+- Easy to combine multiple validators
 
-```bash
-ng generate --help
+Example:
+```typescript
+// Define your class with the decorator
+
+export class MyClass {
+  @controlProp({
+    validators: [Validators.required, Validators.maxLength(4)],
+    defaultValue: ''
+  })
+  firstField: string;
+
+  @controlProp({
+    validators: [Validators.required],
+    defaultValue: ''
+  })
+  secondField: boolean;
+
+  @controlProp({
+    validators: [JlValidators.required((control) => control.parent?.get('firstField')?.value === 'test')]
+  })
+  anotherField: number;
+
+  fieldToIgnore: string;
+}
 ```
+Other Validators available, working in the same way:
+* minLength
+* maxLength
+* pattern
+* email
+* min
+* max
+* requiredTrue
 
-## Building
 
-To build the library, run:
+### Conditional Form Control Management
+- Enable/disable form controls based on custom conditions
+- Dynamic validation based on form state
+- Reactive form control behavior
 
-```bash
-ng build typed-form-craft
+Example:
+```typescript
+// Define your class with the decorator
+
+export class MyClass {
+  @controlProp({
+    validators: [Validators.required, Validators.maxLength(4)],
+    defaultValue: ''
+  })
+  firstField: string;
+
+  @controlProp({
+    validators: [Validators.required],
+    defaultValue: '',
+    disable: (form: FormGroup) => form.get('firstField').invalid
+  })
+  secondField: boolean;
+
+  @controlProp({
+    validators: [JlValidators.required((control) => control.parent?.get('firstField')?.value === 'test')]
+  })
+  anotherField: number;
+
+  fieldToIgnore: string;
+}
 ```
-
-This command will compile your project, and the build artifacts will be placed in the `dist/` directory.
-
-### Publishing the Library
-
-Once the project is built, you can publish your library by following these steps:
-
-1. Navigate to the `dist` directory:
-   ```bash
-   cd dist/typed-form-craft
-   ```
-
-2. Run the `npm publish` command to publish your library to the npm registry:
-   ```bash
-   npm publish
-   ```
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
