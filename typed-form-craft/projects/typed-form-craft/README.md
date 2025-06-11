@@ -5,7 +5,7 @@ This library provides a convenient way to transform TypeScript classes into Angu
 
 ## Installation
 
-npm install typed-form-craft
+npm install jlf-typed-form-craft
 
 ## Requirements
 - Angular 19.0.0 or higher
@@ -40,8 +40,10 @@ export class CustomerComponent {
   customerForm: FormGroup;
 
   constructor() {
-    // Automatically creates a FormGroup with all FormControls (only decorated)
-    this.customerForm = createFormFromClass<MyClass>(test);
+    const model = new MyClass();
+    // Automatically creates a FormGroup with all FormControls (only decorated) 
+    // with default value set
+    this.customerForm = createFormFromClass<MyClass>(model);
   }
 }
 ```
@@ -56,18 +58,17 @@ Example:
 // Define your class with the decorator
 
 export class MyClass {
+  // add two validators
   @controlProp({
     validators: [Validators.required, Validators.maxLength(4)],
     defaultValue: ''
   })
   firstField: string;
 
-  @controlProp({
-    validators: [Validators.required],
-    defaultValue: ''
-  })
+  @controlProp({ defaultValue: '' })
   secondField: boolean;
 
+  // added JlValidators with conditional expression.
   @controlProp({
     validators: [JlValidators.required((control) => control.parent?.get('firstField')?.value === 'test')]
   })
@@ -76,7 +77,7 @@ export class MyClass {
   fieldToIgnore: string;
 }
 ```
-Other Validators available, working in the same way:
+Other JlValidators available, working in the same way:
 * minLength
 * maxLength
 * pattern
@@ -102,8 +103,8 @@ export class MyClass {
   })
   firstField: string;
 
+  // added disable control if firstField invalid
   @controlProp({
-    validators: [Validators.required],
     defaultValue: '',
     disable: (form: FormGroup) => form.get('firstField').invalid
   })
@@ -117,3 +118,5 @@ export class MyClass {
   fieldToIgnore: string;
 }
 ```
+## Licence
+MIT

@@ -1,6 +1,9 @@
 {
   "name": "jlf-typed-form-craft",
   "version": "1.0.3",
+  "description": "A library to create forms with typed datas and validations",
+  "author": "Julien Le Fur",
+  "license": "MIT",
   "peerDependencies": {
     "@angular/common": "^19.2.0",
     "@angular/core": "^19.2.0"
@@ -8,5 +11,29 @@
   "dependencies": {
     "tslib": "^2.3.0"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "keywords": [
+    "angular",
+    "angular 19",
+    "forms",
+    "typed",
+    "decorators",
+    "validators",
+    "conditional",
+    "validation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Darwinnix/typed-form-craft.git"
+  },
+  "homepage": "https://github.com/Darwinnix/typed-form-craft/blob/dev/typed-form-craft/projects/typed-form-craft/README.md",
+  "bugs": {
+    "url": "https://github.com/Darwinnix/typed-form-craft/issues"
+  },
+  "contributors": [
+    "Julien Le Fur <julienlf@hotmail.com>"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
