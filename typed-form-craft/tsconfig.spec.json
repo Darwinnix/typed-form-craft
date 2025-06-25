@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/spec",
+    "types": ["jest", "node"],
+    "esModuleInterop": true
+  },
+  "include": [
+    "projects/**/*.spec.ts",
+    "projects/**/*.d.ts",
+    "./projects/typed-form-craft/src/lib/**/*.ts",
+    "./projects/typed-form-craft/src/lib/**/*.spec.ts"
+  ]
+}
