@@ -30,7 +30,6 @@ export const conditionalValidator = (config: ConditionalValidatorConfig): Valida
   return (control: AbstractControl): ValidationErrors | null => {
     const form = control.parent as FormGroup;
 
-
     if (form && form !== lastForm) {
       subscriptions.unsubscribe();
       subscriptions = new Subscription();
@@ -42,7 +41,7 @@ export const conditionalValidator = (config: ConditionalValidatorConfig): Valida
       form.get = (path: string) => {
         watchedFields.add(path);
         return originalGet(path);
-      }
+      };
 
       // Test execution to detect used fields
       config.condition(control);
@@ -60,7 +59,7 @@ export const conditionalValidator = (config: ConditionalValidatorConfig): Valida
             })
           );
         }
-      })
+      });
 
       lastForm = form;
     }
@@ -76,9 +75,9 @@ export const conditionalValidator = (config: ConditionalValidatorConfig): Valida
  * based on a specified condition function and Angular's built-in validators.
  */
 export const JlValidators = {
-  required: (condition: (control: AbstractControl) => boolean): ValidatorFn => {
+  required: (condition: (formGroup: FormGroup) => boolean): ValidatorFn => {
     return conditionalValidator({
-      condition,
+      condition: (control: AbstractControl) => condition(control.parent as FormGroup),
       validator: Validators.required,
     });
   },

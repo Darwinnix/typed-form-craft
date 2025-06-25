@@ -1,6 +1,6 @@
 {
   "name": "jlf-typed-form-craft",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A library to create forms with typed datas and validations",
   "author": "Julien Le Fur",
   "license": "MIT",

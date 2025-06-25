@@ -1,33 +1,22 @@
 import "reflect-metadata";
-import {controlProp, FormControlOptions} from "./forms.utils";
 import {createFormFromClass, DestroyableFormGroup} from './forms.utils';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 
 const FORM_CONTROL_METADATA = "form:control:metadata";
-
-describe("controlProp", () => {
-  it("should store the options in the class metadata for the given property", () => {
-    const options: FormControlOptions = {
-      validators: [jest.fn()],
-      asyncValidators: [jest.fn()],
-      defaultValue: "test"
-    };
-
-    const target = {};
-    const propertyKey = "testProperty";
-
-    controlProp(options)(target, propertyKey);
-
-    const metadata = Reflect.getMetadata("form:control:metadata", target);
-    expect(metadata).toBeDefined();
-    expect(metadata[propertyKey]).toBe(options);
-  });
-});
+const FORM_GROUP_METADATA = "form:group:metadata";
 
 describe('createFormFromClass', () => {
+  class AddressClass {
+   city: string;
+   country: string;
+  }
   class TestClass {
     name = 'Default Name';
     age = 25;
+    address: AddressClass = {
+      city: 'Default City',
+      country: 'Default Country'
+    }
   }
 
   beforeAll(() => {
@@ -41,6 +30,17 @@ describe('createFormFromClass', () => {
         disable: (formGroup: FormGroup) => formGroup.get('name')?.value === 'Disabled'
       }
     }, TestClass.prototype);
+    Reflect.defineMetadata(FORM_GROUP_METADATA, {
+      address: undefined
+    }, TestClass.prototype);
+    Reflect.defineMetadata(FORM_CONTROL_METADATA, {
+      city: {
+        defaultValue: 'Paris'
+      },
+      country: {
+        defaultValue: 'France'
+      }
+    }, AddressClass.prototype);
   });
 
   it('should create a form with controls based on metadata', () => {
@@ -87,5 +87,14 @@ describe('createFormFromClass', () => {
     formGroup.destroy();
 
     expect(destroySpy).toHaveBeenCalled();
+  });
+
+  it('should create FormGroup for address', () => {
+    const instance = new TestClass();
+    const formGroup = createFormFromClass(instance);
+
+    const address = formGroup.controls.address as FormGroup;
+
+    expect(address).toBeDefined();
   });
 });

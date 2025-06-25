@@ -1,5 +1,6 @@
 # FormGroup Decorator Library Documentation
-
+[![npm version](https://badge.fury.io/js/jlf-typed-form-craft.svg?icon=si%3Anpm)](https://badge.fury.io/js/jlf-typed-form-craft)
+[![NPM Downloads](https://img.shields.io/npm/dm/jlf-typed-form-craft)](https://www.npmjs.com/package/jlf-typed-form-craft)
 ## Overview
 This library provides a convenient way to transform TypeScript classes into Angular FormGroups using decorators. It simplifies form management by automatically creating FormControls from class properties and handling validation.
 
@@ -70,7 +71,7 @@ export class MyClass {
 
   // added JlValidators with conditional expression.
   @controlProp({
-    validators: [JlValidators.required((control) => control.parent?.get('firstField')?.value === 'test')]
+    validators: [JlValidators.required((form: FormGroup) => form.get('firstField')?.value === 'test')]
   })
   anotherField: number;
 
@@ -111,7 +112,7 @@ export class MyClass {
   secondField: boolean;
 
   @controlProp({
-    validators: [JlValidators.required((control) => control.parent?.get('firstField')?.value === 'test')]
+    validators: [JlValidators.required((form: FormGroup) => form.get('firstField')?.value === 'test')]
   })
   anotherField: number;
 

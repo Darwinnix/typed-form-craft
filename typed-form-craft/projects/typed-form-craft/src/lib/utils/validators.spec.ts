@@ -269,8 +269,8 @@ describe('JlValidators', () => {
 
   describe('conditional validation with dependencies', () => {
     it('should update validation when dependent field changes', () => {
-      const validator = JlValidators.required(control => {
-        return control.parent?.get('conditionControl')?.value === true;
+      const validator = JlValidators.required((form: FormGroup) => {
+        return form.get('conditionControl')?.value === true;
       });
 
       control.setValidators(validator);
