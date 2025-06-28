@@ -1,0 +1,81 @@
+name: PR Merge CI
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests in typed-form-craft
+        run: |
+          cd typed-form-craft
+          npm install
+          npm test
+
+  check-version:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Check if version has been incremented
+        id: check_version
+        run: |
+          cd typed-form-craft
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          git fetch origin master
+          git checkout master
+          MASTER_VERSION=$(node -p "require('./package.json').version")
+          git checkout -
+          
+          if [ "$CURRENT_VERSION" == "$MASTER_VERSION" ]; then
+            echo "La version doit être incrémentée."
+            exit 1
+          fi
+
+  version-and-publish:
+    needs: check-version
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build library
+        run: |
+          cd typed-form-craft
+          npm run build --prod
+
+      - name: Publish library
+        run: |
+          cd typed-form-craft
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
